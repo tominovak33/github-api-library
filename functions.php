@@ -13,6 +13,10 @@ function get_api_response($url) {
     return json_decode($returned_data);
 }
 
+function get_all_repositories($username) {
+    return get_api_response('users/' . $username . '/repos');
+}
+
 function get_repo_name($repo) {
     return $repo->full_name;
 }

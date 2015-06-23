@@ -65,11 +65,10 @@ function clone_repository($repository) {
     $repository_name = get_repo_name($repository);
     $repository_url = get_repo_html_url($repository);
     $timestamp = standard_timestamp();
-    $backup_folder_path = './backups/'.$timestamp.'/'.$repository_name.'/';
+    $backup_folder_path = './../backups/'.$timestamp.'/'.$repository_name.'/';
     create_backup_folder($backup_folder_path);
     $command = "git clone " . $repository_url . ' ' . $backup_folder_path;
-    $backup = shell_exec($command);
-    echo "<pre>$backup</pre>";
+    $backup = exec($command);
 }
 
 

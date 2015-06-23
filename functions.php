@@ -32,6 +32,10 @@ function get_repo_name($repo) {
     return $repo->full_name;
 }
 
+function get_repo_short_name($repo) {
+    return $repo->name;
+}
+
 function get_repo_html_url($repo) {
     return $repo->html_url;
 }
@@ -47,4 +51,14 @@ function get_repo_last_update($repo, $unix_timestamp = false) {
     }
 
     return $repo->pushed_at;
+}
+
+/*
+ * Easy way to make sure that all my timestamps are the same format and if I ever need to change that format it can be quickly done in one place
+ */
+function standard_timestamp ($timestamp = false) {
+    if ($timestamp) {
+        return  date("Y-m-d" ,strtotime($timestamp));
+    }
+    return date("Y-m-d");
 }

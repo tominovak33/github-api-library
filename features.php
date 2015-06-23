@@ -74,7 +74,7 @@ function clone_repository($repository) {
 
 function create_backup_folder ($full_folder_name) {
 
-    if (!mkdir($full_folder_name, 0777, true)) {
+    if (!mkdir($full_folder_name, 0700, true)) {
         return('Failed to create folders');
     }
     return true;

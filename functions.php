@@ -17,10 +17,22 @@ function get_all_repositories($username) {
     return get_api_response('users/' . $username . '/repos');
 }
 
+function get_repository($username, $repository_name) {
+    return get_api_response('repos/'. $username . $repository_name);
+}
+
 function get_repo_name($repo) {
     return $repo->full_name;
 }
 
 function get_repo_html_url($repo) {
     return $repo->html_url;
+}
+
+function get_repo_api_url($repo) {
+    return $repo->url;
+}
+
+function get_repo_last_edit($repo) {
+    return $repo->updated_at;
 }

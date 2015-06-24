@@ -4,11 +4,18 @@ function get_api_response($url) {
     $api_url = DOMAIN . $url;
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $api_url);
-    //curl_setopt($curl, CURLOPT_USERPWD, USER.':'.PASSWORD);
+    curl_setopt($curl, CURLOPT_USERPWD, USER.':'.PASSWORD);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    //curl_setopt($curl, CURLOPT_VERBOSE, 1);
+    curl_setopt($curl, CURLOPT_HEADER, true);
     curl_setopt($curl, CURLOPT_USERAGENT, GITHUB_USERAGENT);
     $returned_data = curl_exec($curl);
     curl_close($curl);
+
+    list($header, $body) = explode("\r\n\r\n", $returned_data, 2);
+
+    echo "<pre>";
+    var_dump($header);
 
     return json_decode($returned_data);
 }
@@ -26,6 +33,10 @@ function get_all_repositories($username) {
 
 function get_repository($username, $repository_name) {
     return get_api_response('repos/'. $username . $repository_name);
+}
+
+function get_all_org_repositories($organisation) {
+    return get_api_response('orgs/' . $organisation . '/repos?&per_page=100');
 }
 
 function get_repo_name($repo) {

@@ -14,17 +14,18 @@ function get_api_response($url) {
 
     list($header, $body) = explode("\r\n\r\n", $returned_data, 2);
 
-    echo "<pre>";
-    var_dump($header);
+    $response = [];
+    $response['headers'] = $header;
+    $response['body'] = json_decode($body);
 
-    return json_decode($returned_data);
+    return $response;
 }
 
 function get_all_repositories($username) {
     /*
      * Dev only todo: remove this
      */
-    return json_decode(ALL_REPOSITORIES);
+    //return json_decode(ALL_REPOSITORIES);
     /*
      * End Dev
      */
@@ -36,7 +37,7 @@ function get_repository($username, $repository_name) {
 }
 
 function get_all_org_repositories($organisation) {
-    return get_api_response('orgs/' . $organisation . '/repos?&per_page=100');
+    return get_api_response('orgs/' . $organisation . '/repos?&per_page=2');
 }
 
 function get_repo_name($repo) {
@@ -72,4 +73,23 @@ function standard_timestamp ($timestamp = false) {
         return  date("Y-m-d" ,strtotime($timestamp));
     }
     return date("Y-m-d");
+}
+
+function get_next_api_page_url($current_headers) {
+    $headers = explode("\n", $current_headers);
+
+    foreach ($headers as $header ) {
+        $header_name = strstr($header, ':', true);
+        if ($temp[0] == 'Link') {
+            $links = explode(',', $temp[1]);
+            foreach ($links as $link) {
+                echo "<pre>";
+                var_dump($link);
+            }
+        }
+    }
+
+    //echo "<pre>";
+    //var_dump($headers);
+    die;
 }

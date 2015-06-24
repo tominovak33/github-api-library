@@ -9,13 +9,23 @@ require ('features.php');
  */
 
 
-$all_repositories = get_all_repositories('tominovak33');
-//echo($all_repositories);
-//die;
+$api_response = get_all_org_repositories('whiteoctober');
 
-$result = get_recently_edited_repositories($all_repositories, '2015-05-20');
+$next = get_next_api_page_url($api_response['headers']);
+echo "<pre>";
+var_dump($next);
+die;
+$all_repositories = $api_response['body'];
 
-clone_repositories($result);
+
+
+$names = list_all_repo_names($all_repositories);
+//echo "<pre>";
+//var_dump($names);
+die;
+
+//$result = get_recently_edited_repositories($all_repositories, '2015-05-20');
+
 
 die;
 

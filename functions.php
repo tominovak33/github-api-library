@@ -37,7 +37,7 @@ function get_repository($username, $repository_name) {
 }
 
 function get_all_org_repositories($organisation) {
-    return get_api_response('orgs/' . $organisation . '/repos?&per_page=2');
+    return get_api_response('orgs/' . $organisation . '/repos?&per_page=100&page=1');
 }
 
 function get_repo_name($repo) {
@@ -50,6 +50,10 @@ function get_repo_short_name($repo) {
 
 function get_repo_html_url($repo) {
     return $repo->html_url;
+}
+
+function get_repo_ssh_clone_url($repo) {
+    return $repo->ssh_url;
 }
 
 function get_repo_api_url($repo) {

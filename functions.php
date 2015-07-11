@@ -104,7 +104,10 @@ function get_api_header_link_url($current_headers, $rel='next') {
                 //Split the links on the first ';' so we get the link value and the relation to the current page (next, last)
                 list($location, $link_rel) = explode( ';' , $link, 2);
                     //If the relation is the one specified then return it
-                    if ($link_rel == $rel) {
+                    if (strpos($link_rel, $rel) !== false) {
+                        $location = trim($location, ' '); //todo clean this up later
+                        $location = trim($location, '>');
+                        $location = trim($location, '<');
                         return $location;
                     }
             }

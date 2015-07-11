@@ -2,6 +2,9 @@
 
 function get_api_response($url) {
     $api_url = DOMAIN . $url;
+    if (strpos($url, 'http') !== false) {
+        $api_url = $url;
+    }
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $api_url);
     curl_setopt($curl, CURLOPT_USERPWD, USER.':'.PASSWORD);
@@ -29,7 +32,33 @@ function get_all_repositories($username) {
     /*
      * End Dev
      */
-    return get_api_response('users/' . $username . '/repos');
+    $more_pages  = false;
+
+    $total_responses[] = get_api_response('users/' . $username . '/repos');
+
+    $next_url = get_api_header_link_url($total_responses[0]['headers']);
+
+    if ($next_url) {
+        $more_pages = true;
+    }
+
+    while ($more_pages) {
+        $response = get_api_response($next_url);
+        $total_responses[] = $response['body'];
+
+        $next_url = get_api_header_link_url($response['headers']);
+
+        if ($next_url) {
+            $more_pages = true;
+        }
+        else {
+            $more_pages = false;
+        }
+
+
+    }
+
+    return $total_responses;
 }
 
 function get_repository($username, $repository_name) {
@@ -37,7 +66,33 @@ function get_repository($username, $repository_name) {
 }
 
 function get_all_org_repositories($organisation) {
-    return get_api_response('orgs/' . $organisation . '/repos?&per_page=100&page=1');
+
+    $more_pages  = false;
+
+    $total_responses[] = get_api_response('orgs/' . $organisation . '/repos?&per_page=100&page=1');
+
+    $next_url = get_api_header_link_url($total_responses[0]['headers']);
+
+    if ($next_url) {
+        $more_pages = true;
+    }
+
+    while ($more_pages) {
+        $response = get_api_response($next_url);
+
+        $total_responses[] = $response;
+
+        $next_url = get_api_header_link_url($response['headers']);
+
+        if ($next_url) {
+            $more_pages = true;
+        }
+        else {
+            $more_pages = false;
+        }
+    }
+
+    return $total_responses;
 }
 
 function get_repo_name($repo) {
@@ -93,7 +148,7 @@ function get_api_header_link_url($current_headers, $rel='next') {
     //Loop through all headers
     foreach ($headers as $header ) {
         //Explode headers on the first ':' so we get the name and the value. EG: "Host: api.github.com"
-        list($header_name, $header_value) = explode(':', $header, 2);
+        @list($header_name, $header_value) = explode(':', $header, 2);
 
         //Get the header where the name is link
         if ($header_name == 'Link') {

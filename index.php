@@ -7,10 +7,6 @@ require ('features.php');
 //$api_response = get_all_org_repositories('org-name-here');
 $api_response = get_all_repositories('tominovak33');
 
-$all_repositories = $api_response['body'];
+$combined_response = combine_responses($api_response);
 
-$clone_urls = get_repository_clone_urls($all_repositories);
-write_commands_to_file($clone_urls); //then run this file from the command line (maybe set up a cron? )
-
-echo "<pre>";
-var_dump($clone_urls);
+write_clone_urls_to_file($combined_response);

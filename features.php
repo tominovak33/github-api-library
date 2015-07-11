@@ -65,26 +65,13 @@ function get_repository_clone_url($repository) {
     $repository_name = get_repo_name($repository);
     $repository_url = get_repo_ssh_clone_url($repository);
     $timestamp = standard_timestamp();
-    $backup_folder_path = './../backups/'.$timestamp.'/'.$repository_name.'/';
-    if (!file_exists($backup_folder_path)) {
-        create_backup_folder($backup_folder_path);
-    }
+    $backup_folder_path = './../backups/'.$timestamp.'/'.$repository_name.'/'; //Php wont create this, but this is where the commands that we write to a file will be set to clone the repos into
     return "git clone " . $repository_url . ' ' . $backup_folder_path. ';';
 }
 
 function clone_repository($repository) {
     $command = get_repository_clone_url($repository);
     return exec($command);
-
-}
-
-
-function create_backup_folder ($full_folder_name) {
-
-    if (!mkdir($full_folder_name, 0777, true)) {
-        return('Failed to create folders');
-    }
-    return true;
 
 }
 
@@ -119,4 +106,22 @@ function write_commands_to_file($commands) {
 
     fclose($datafile);
 
+}
+
+
+//Takes the response bodies from a multi page api request and turns it into a single response string. (leaving out the headers)
+function combine_responses($total_responses) {
+    $combined  = [];
+    foreach ($total_responses as $response) {
+        $combined = array_merge($combined, $response['body']);
+    }
+
+    return $combined;
+}
+
+
+function write_clone_urls_to_file ($repos) {
+    $clone_urls = get_repository_clone_urls($repos);
+
+    write_commands_to_file($clone_urls); //then run this file from the command line (maybe set up a cron? )
 }

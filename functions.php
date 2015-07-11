@@ -79,21 +79,37 @@ function standard_timestamp ($timestamp = false) {
     return date("Y-m-d");
 }
 
-function get_next_api_page_url($current_headers) {
+/**
+ * @param $current_headers
+ * @param string $rel
+ * @return mixed
+ *
+ * Get the links that github return in the headers, by default get the next one or set the second param to 'last' to get the previous one
+ */
+function get_api_header_link_url($current_headers, $rel='next') {
+    //Get all headers into an array
     $headers = explode("\n", $current_headers);
 
+    //Loop through all headers
     foreach ($headers as $header ) {
-        $header_name = strstr($header, ':', true);
-        if ($temp[0] == 'Link') {
-            $links = explode(',', $temp[1]);
+        //Explode headers on the first ':' so we get the name and the value. EG: "Host: api.github.com"
+        list($header_name, $header_value) = explode(':', $header, 2);
+
+        //Get the header where the name is link
+        if ($header_name == 'Link') {
+            //Get the 2 links (next and last)
+            $links = explode(',', $header_value);
+            //Loop through those links
             foreach ($links as $link) {
-                echo "<pre>";
-                var_dump($link);
+                //Split the links on the first ';' so we get the link value and the relation to the current page (next, last)
+                list($location, $link_rel) = explode( ';' , $link, 2);
+                    //If the relation is the one specified then return it
+                    if ($link_rel == $rel) {
+                        return $location;
+                    }
             }
         }
     }
 
-    //echo "<pre>";
-    //var_dump($headers);
-    die;
+    return false;
 }
